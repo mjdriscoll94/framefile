@@ -85,6 +85,15 @@ final class ScreenStashUITests: XCTestCase {
         app.tabBars.buttons["Categories"].tap()
 
         XCTAssertTrue(app.staticTexts["category.row.Unsorted"].waitForExistence(timeout: 5))
+        let remindersCategory = app.staticTexts["category.row.Reminders"]
+        XCTAssertTrue(remindersCategory.waitForExistence(timeout: 5))
+        remindersCategory.tap()
+
+        XCTAssertTrue(app.navigationBars["Reminders"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Upcoming"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Flight to Chicago"].waitForExistence(timeout: 5))
+
+        app.navigationBars.buttons.firstMatch.tap()
         let resolvedCategory = app.staticTexts["category.row.Resolved"]
         XCTAssertTrue(resolvedCategory.waitForExistence(timeout: 5))
         resolvedCategory.tap()

@@ -19,6 +19,7 @@ struct CategoriesView: View {
 
     var body: some View {
         let unsortedItems = viewModel.unsortedItems(from: items)
+        let reminderItems = viewModel.reminderItems(from: items)
         let resolvedItems = viewModel.resolvedItems(from: items)
         let archivedItems = viewModel.archivedItems(from: items)
 
@@ -35,6 +36,19 @@ struct CategoriesView: View {
                         countDescription: "unsorted screenshots"
                     )
                     .accessibilityIdentifier("category.row.Unsorted")
+                }
+
+                NavigationLink {
+                    ReminderScreenshotsView()
+                } label: {
+                    CategorySummaryRow(
+                        name: "Reminders",
+                        symbolName: "bell.badge",
+                        count: reminderItems.count,
+                        recentItems: Array(reminderItems.prefix(3)),
+                        countDescription: "screenshots with reminders"
+                    )
+                    .accessibilityIdentifier("category.row.Reminders")
                 }
             }
 

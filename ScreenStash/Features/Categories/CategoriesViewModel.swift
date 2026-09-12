@@ -56,6 +56,22 @@ final class CategoriesViewModel {
             .sorted { $0.updatedAt > $1.updatedAt }
     }
 
+    /// Returns every unresolved screenshot that has a reminder, ordered by the
+    /// time the user needs to act. Overdue reminders naturally appear first.
+    func reminderItems(from items: [ScreenshotItem]) -> [ScreenshotItem] {
+        items
+            .filter { $0.isUnresolved && $0.reminderDate != nil }
+            .sorted { first, second in
+                guard let firstDate = first.reminderDate else { return false }
+                guard let secondDate = second.reminderDate else { return true }
+
+                if firstDate == secondDate {
+                    return first.importedAt > second.importedAt
+                }
+                return firstDate < secondDate
+            }
+    }
+
     @discardableResult
     func addCategory(
         name: String,

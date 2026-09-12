@@ -184,6 +184,37 @@ final class CategoryManagementTests: XCTestCase {
         XCTAssertEqual(results.map(\.id), [newer.id, older.id])
     }
 
+    func testReminderCollectionContainsOnlyUnresolvedRemindersInDueDateOrder() {
+        let overdue = ScreenshotItem(
+            importedAt: Date(timeIntervalSince1970: 300),
+            imageData: Data([1]),
+            title: "Overdue",
+            reminderDate: Date(timeIntervalSince1970: 100)
+        )
+        let upcoming = ScreenshotItem(
+            importedAt: Date(timeIntervalSince1970: 200),
+            imageData: Data([2]),
+            title: "Upcoming",
+            reminderDate: Date(timeIntervalSince1970: 400)
+        )
+        let noReminder = ScreenshotItem(
+            imageData: Data([3]),
+            title: "No reminder"
+        )
+        let resolved = ScreenshotItem(
+            imageData: Data([4]),
+            title: "Resolved",
+            status: .resolved,
+            reminderDate: Date(timeIntervalSince1970: 50)
+        )
+
+        let results = CategoriesViewModel().reminderItems(
+            from: [upcoming, resolved, noReminder, overdue]
+        )
+
+        XCTAssertEqual(results.map(\.id), [overdue.id, upcoming.id])
+    }
+
     func testResetAllPreferencesClearsEveryScreenStashPreference() throws {
         let suiteName = "ScreenStashPreferencesTests-\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))

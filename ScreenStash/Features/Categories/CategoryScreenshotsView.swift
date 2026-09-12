@@ -84,6 +84,113 @@ struct ArchivedScreenshotsView: View {
     }
 }
 
+struct ReminderScreenshotsView: View {
+    @Query(sort: \ScreenshotItem.importedAt, order: .reverse)
+    private var allItems: [ScreenshotItem]
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            let reminderItems = sortedReminderItems
+            let overdueItems = reminderItems.filter {
+                ($0.reminderDate ?? .distantFuture) < context.date
+            }
+            let upcomingItems = reminderItems.filter {
+                ($0.reminderDate ?? .distantPast) >= context.date
+            }
+
+            Group {
+                if reminderItems.isEmpty {
+                    EmptyStateView(
+                        title: "No Screenshot Reminders",
+                        message: "Add a reminder from a screenshot's detail view or its Inbox quick actions.",
+                        systemImage: "bell.badge"
+                    )
+                } else {
+                    reminderList(overdueItems: overdueItems, upcomingItems: upcomingItems)
+                }
+            }
+        }
+        .frameFileScreenBackground()
+        .navigationTitle("Reminders")
+    }
+
+    private var sortedReminderItems: [ScreenshotItem] {
+        allItems
+            .filter { $0.isUnresolved && $0.reminderDate != nil }
+            .sorted { first, second in
+                guard let firstDate = first.reminderDate else { return false }
+                guard let secondDate = second.reminderDate else { return true }
+                if firstDate == secondDate {
+                    return first.importedAt > second.importedAt
+                }
+                return firstDate < secondDate
+            }
+    }
+
+    private func reminderList(
+        overdueItems: [ScreenshotItem],
+        upcomingItems: [ScreenshotItem]
+    ) -> some View {
+        List {
+            if !overdueItems.isEmpty {
+                Section("Overdue") {
+                    ForEach(overdueItems) { item in
+                        reminderDestination(item, isOverdue: true)
+                    }
+                }
+            }
+
+            if !upcomingItems.isEmpty {
+                Section("Upcoming") {
+                    ForEach(upcomingItems) { item in
+                        reminderDestination(item, isOverdue: false)
+                    }
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+    }
+
+    private func reminderDestination(_ item: ScreenshotItem, isOverdue: Bool) -> some View {
+        NavigationLink {
+            ScreenshotDetailView(item: item)
+        } label: {
+            ReminderScreenshotRow(item: item, isOverdue: isOverdue)
+        }
+        .accessibilityIdentifier("reminder.row.\(item.id.uuidString.lowercased())")
+    }
+}
+
+private struct ReminderScreenshotRow: View {
+    let item: ScreenshotItem
+    let isOverdue: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ScreenshotRow(item: item)
+
+            if let reminderDate = item.reminderDate {
+                Label {
+                    HStack(spacing: 5) {
+                        Text(isOverdue ? "Overdue" : "Upcoming")
+                            .fontWeight(.semibold)
+                        Text(reminderDate, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day().hour().minute())
+                    }
+                } icon: {
+                    Image(systemName: isOverdue ? "exclamationmark.circle.fill" : "bell.fill")
+                }
+                .font(.caption)
+                .foregroundStyle(isOverdue ? Color.red : ScreenStashTheme.brandBlue)
+                .accessibilityLabel(
+                    "\(isOverdue ? "Overdue" : "Upcoming") reminder, \(reminderDate.formatted(date: .long, time: .shortened))"
+                )
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 private struct ScreenshotCollectionView: View {
     let items: [ScreenshotItem]
     let title: String
