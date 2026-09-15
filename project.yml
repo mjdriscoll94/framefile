@@ -83,3 +83,25 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.framefile.uitests
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: FrameFile
+
+# Compatibility alias for the existing Xcode Cloud workflow. The scheme name
+# remains internal; every buildable product and customer-facing name is FrameFile.
+schemes:
+  ScreenStash:
+    build:
+      targets:
+        FrameFile: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - FrameFileTests
+        - FrameFileUITests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
