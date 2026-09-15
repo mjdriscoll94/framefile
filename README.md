@@ -8,12 +8,12 @@ FrameFile is a private, local-first iPhone inbox for screenshots. It imports onl
 - iOS 17 or later
 - XcodeGen when regenerating the project from `project.yml`
 
-The checked-in `ScreenStash.xcodeproj` can be opened directly, so XcodeGen is not required for ordinary development.
+The checked-in `FrameFile.xcodeproj` can be opened directly, so XcodeGen is not required for ordinary development.
 
 ## Running the app
 
-1. Open `ScreenStash.xcodeproj`.
-2. Select the ScreenStash scheme and an iPhone simulator or device.
+1. Open `FrameFile.xcodeproj`.
+2. Select the FrameFile scheme and an iPhone simulator or device.
 3. Choose a development team and update the bundle identifier when installing on a physical device.
 4. Build and run.
 
@@ -23,11 +23,11 @@ No account, backend, API key, subscription, or third-party dependency is require
 
 FrameFile includes a Share Extension for the screenshot share sheet. A user can choose FrameFile, assign a built-in category, and save without first opening the app. The extension places the selected image in an App Group staging queue; the main app then performs compression and Vision OCR when it next becomes active.
 
-Both targets use the App Group `group.com.screenstash.shared`. Before running on a physical device or distributing the app:
+Both targets use the original registered App Group. Before running on a physical device or distributing the app:
 
 1. Register this App Group—or replace it with your own identifier—in the Apple Developer portal.
-2. Enable the same App Group for the ScreenStash app and ScreenStashShareExtension identifiers.
-3. Keep the identifier synchronized in both entitlement files and `ScreenStashAppGroup.identifier`.
+2. Enable the same App Group for the FrameFile app and FrameFileShareExtension identifiers.
+3. Keep the identifier synchronized in both entitlement files and `FrameFileAppGroup.identifier`.
 
 Staging avoids performing memory-intensive OCR inside the system extension process and makes imports retryable and idempotent.
 
@@ -51,7 +51,7 @@ The `docs` directory contains a support page and a FrameFile-specific privacy po
 
 ## Export format
 
-The first release exports a `.screenstash` folder package instead of a ZIP archive. It contains:
+FrameFile exports a `.framefile` folder package instead of a ZIP archive. It contains:
 
 - `metadata.json`
 - `images/<screenshot-id>.jpg`
@@ -75,7 +75,7 @@ The unit suite covers category suggestions, OCR failures, search filtering, agin
 
 The UI suite covers opening Inbox, entering import, searching OCR text, opening detail, and resolving a screenshot.
 
-Run all tests with the ScreenStash scheme in Xcode.
+Run all tests with the FrameFile scheme in Xcode.
 
 ## Release checklist
 

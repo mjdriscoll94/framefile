@@ -1,0 +1,32 @@
+import XCTest
+
+@MainActor
+final class FrameFileLaunchTests: XCTestCase {
+    func testOnboardingExplainsDeletingTheOriginal() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-show-onboarding", "-onboarding-page=2"]
+        app.launch()
+
+        XCTAssertTrue(app.staticTexts["Find It, Act, Clear It Out"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.otherElements["onboarding.guide.deleteOriginal"].exists)
+        XCTAssertTrue(app.buttons["onboarding.continue"].exists)
+    }
+
+    func testOnboardingExplainsImportingExistingScreenshots() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-show-onboarding", "-onboarding-page=1"]
+        app.launch()
+
+        XCTAssertTrue(app.staticTexts["Import Existing Screenshots"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.otherElements["onboarding.guide.importExisting"].exists)
+        XCTAssertTrue(app.buttons["onboarding.continue"].exists)
+    }
+
+    func testLaunchesToInboxForReturningUser() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-skip-onboarding"]
+        app.launch()
+
+        XCTAssertTrue(app.navigationBars["Inbox"].waitForExistence(timeout: 5))
+    }
+}

@@ -66,7 +66,7 @@ guard let pngData = bitmap.representation(using: .png, properties: [:]) else {
     exit(1)
 }
 
-let outputURL = URL(fileURLWithPath: "ScreenStash/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png")
+let outputURL = URL(fileURLWithPath: "FrameFile/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png")
 do {
     try pngData.write(to: outputURL, options: .atomic)
 } catch {
